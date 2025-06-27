@@ -4,74 +4,15 @@ import requests
 import json
 
 import config
-
-
 from Job import Job
+from InternshipDataSource import WorkdayFetch
 
 filter_words = ["Bachelor", "B.S", "Undergrad", "BS"]
-
-def fetch_nvidia_data():
-    url = "https://nvidia.wd5.myworkdayjobs.com/wday/cxs/nvidia/NVIDIAExternalCareerSite/jobs"
-
-    headers = {
-        "Content-Type": "application/json",
-        "User-Agent": "Mozilla/5.0",
-        "Accept": "application/json"
-    }
-
-    payload = {
-        "appliedFacets": {
-        # United States location ID
-        "locationHierarchy1": [config.nvidia_US_code],
-        # Intern subtype ID (optional, but narrows results)
-        "workerSubType": [config.nvidia_intern_code]
-        },
-        "limit": 20,
-        "offset": 0,
-        "searchText": "intern",
-        "searchFilters": {
-            "locations": [],
-            "timeType": [],
-            "workerSubType": [],
-            "categories": [],
-            "jobFamilyGroup": [],
-            "jobFamily": [],
-            "teams": []
-        },
-        "facetCriteria": [
-        {"facetName": "locationHierarchy1", "filterType": "MULTI"},  # ← FIXED
-        {"facetName": "timeType", "filterType": "MULTI"},
-        {"facetName": "workerSubType", "filterType": "MULTI"},
-        {"facetName": "categories", "filterType": "MULTI"},
-        {"facetName": "jobFamilyGroup", "filterType": "MULTI"},
-        {"facetName": "jobFamily", "filterType": "MULTI"},
-        {"facetName": "teams", "filterType": "MULTI"}
-    ]
-    }
-
-    response = requests.post(url, headers=headers, json=payload)
-    data = response.json()
-    jobs = data.get("jobPostings", [])
-    job_paths = [job.get("externalPath") for job in jobs]
-
-    total_jobs_scraped = []
-
-    for path in job_paths:
-        url2 = url[:url.index("/job")] + path
-        resp2 = requests.get(url2)
-        data2 = resp2.json()
-        jobpostingdata = data2.get("jobPostingInfo", [])
-        jobhiringdata = data2.get("hiringOrganization")
-
-        total_jobs_scraped.append(Job(
-            req_id=jobpostingdata.get("jobReqID"),
-            title=jobpostingdata.get("jobPostingId"),
-            posted_date=jobpostingdata.get("postedOn"),
-            apply_url=jobpostingdata.get("externalUrl"),
-            description=jobpostingdata.get("jobDescription"),
-            company=jobhiringdata.get("name")))
-    return total_jobs_scraped
-
+test_urls = ["https://nvidia.wd5.myworkdayjobs.com/wday/cxs/nvidia/NVIDIAExternalCareerSite/jobs",
+             "https://analogdevices.wd1.myworkdayjobs.com/wday/cxs/analogdevices/External/jobs",
+             "https://cadence.wd1.myworkdayjobs.com/wday/cxs/cadence/External_Careers/jobs",
+             "https://marvell.wd1.myworkdayjobs.com/wday/cxs/marvell/MarvellCareers/jobs",
+             "https://intel.wd1.myworkdayjobs.com/wday/cxs/intel/External/jobs"]
 
 
 def fetch_raw_intern_data(page):
@@ -123,6 +64,6 @@ def filter_internship_results(job_list):
 # filtered_jobs = filter_internship_results(unfiltered_jobs)
 # print(str(len(filtered_jobs)) + " " + str(len(unfiltered_jobs)))
 
-unfiltered = fetch_nvidia_data()
-for item in filter_internship_results(unfiltered):
+unfiltered = WorkdayFetch(url = "https://nvidia.wd5.myworkdayjobs.com/wday/cxs/nvidia/NVIDIAExternalCareerSite/jobs", intern_code=config.nvidia_intern_code, us_code = config.nvidia_US_code)
+for item in filter_internship_results(unfiltered.ObtainWorkdayData()):
     print(item.job_to_string())

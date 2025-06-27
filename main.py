@@ -1,9 +1,56 @@
 import requests
 import json
 
+import config
+
+
 from Job import Job
 
 filter_words = ["Bachelor's", "B.S", "Undergrad"]
+
+def fetch_nvidia_data():
+    url = "https://nvidia.wd5.myworkdayjobs.com/wday/cxs/nvidia/NVIDIAExternalCareerSite/jobs"
+
+    headers = {
+        "Content-Type": "application/json",
+        "User-Agent": "Mozilla/5.0",
+        "Accept": "application/json"
+    }
+
+    payload = {
+        "appliedFacets": {
+        # United States location ID
+        "locationHierarchy1": [config.nvidia_US_code],
+        # Intern subtype ID (optional, but narrows results)
+        "workerSubType": [config.nvidia_intern_code]
+        },
+        "limit": 20,
+        "offset": 0,
+        "searchText": "intern",
+        "searchFilters": {
+            "locations": [],
+            "timeType": [],
+            "workerSubType": [],
+            "categories": [],
+            "jobFamilyGroup": [],
+            "jobFamily": [],
+            "teams": []
+        },
+        "facetCriteria": [
+        {"facetName": "locationHierarchy1", "filterType": "MULTI"},  # ← FIXED
+        {"facetName": "timeType", "filterType": "MULTI"},
+        {"facetName": "workerSubType", "filterType": "MULTI"},
+        {"facetName": "categories", "filterType": "MULTI"},
+        {"facetName": "jobFamilyGroup", "filterType": "MULTI"},
+        {"facetName": "jobFamily", "filterType": "MULTI"},
+        {"facetName": "teams", "filterType": "MULTI"}
+    ]
+    }
+
+    response = requests.post(url, headers=headers, json=payload)
+    data = response.json()
+    return data
+
 
 
 def fetch_raw_intern_data(page):
@@ -50,10 +97,9 @@ def filter_internship_results(job_list):
 
     return newlist
 
-if __name__ == "__main__":
-    unfiltered_jobs = fetch_raw_intern_data(page=1)
-    filtered_jobs = filter_internship_results(unfiltered_jobs)
-    print(str(len(filtered_jobs)) + " " + str(len(unfiltered_jobs)))
 
-    for i in filtered_jobs:
-        print(i.job_to_string())
+# unfiltered_jobs = fetch_raw_intern_data(page=1)
+# filtered_jobs = filter_internship_results(unfiltered_jobs)
+# print(str(len(filtered_jobs)) + " " + str(len(unfiltered_jobs)))
+
+print(fetch_nvidia_data())

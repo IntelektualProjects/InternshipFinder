@@ -1,3 +1,6 @@
+from io import StringIO
+
+
 class Job:
     def __init__(self, **kwargs):
         self.title = kwargs.get("title", "No Title For Position")
@@ -8,11 +11,11 @@ class Job:
         self.description = kwargs.get("description", "No Description For Position")
 
     def job_to_string(self):
-        string = ""
-        string += "Title: " + self.title + "\n"
-        string += "Date Posted: " + self.date_posted + "\n"
-        string += "Apply URL: " + self.apply_url + "\n"
-        string += "Company: " + self.company + "\n"
-        string += "Description: " + self.description + "\n"
+        string = StringIO()
+        string.write("Title: " + self.title + "\n")
+        string.write("Date Posted: " + self.date_posted + "\n")
+        string.write("Apply URL: " + self.apply_url + "\n")
+        string.write("Company: " + self.company + "\n")
+        string.write("Description: " + self.description + "\n")
 
-        return string
+        return string.getvalue()

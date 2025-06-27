@@ -1,3 +1,5 @@
+from operator import indexOf
+
 import requests
 import json
 
@@ -6,7 +8,7 @@ import config
 
 from Job import Job
 
-filter_words = ["Bachelor's", "B.S", "Undergrad"]
+filter_words = ["Bachelor", "B.S", "Undergrad", "BS"]
 
 def fetch_nvidia_data():
     url = "https://nvidia.wd5.myworkdayjobs.com/wday/cxs/nvidia/NVIDIAExternalCareerSite/jobs"
@@ -49,7 +51,26 @@ def fetch_nvidia_data():
 
     response = requests.post(url, headers=headers, json=payload)
     data = response.json()
-    return data
+    jobs = data.get("jobPostings", [])
+    job_paths = [job.get("externalPath") for job in jobs]
+
+    total_jobs_scraped = []
+
+    for path in job_paths:
+        url2 = url[:url.index("/job")] + path
+        resp2 = requests.get(url2)
+        data2 = resp2.json()
+        jobpostingdata = data2.get("jobPostingInfo", [])
+        jobhiringdata = data2.get("hiringOrganization")
+
+        total_jobs_scraped.append(Job(
+            req_id=jobpostingdata.get("jobReqID"),
+            title=jobpostingdata.get("jobPostingId"),
+            posted_date=jobpostingdata.get("postedOn"),
+            apply_url=jobpostingdata.get("externalUrl"),
+            description=jobpostingdata.get("jobDescription"),
+            company=jobhiringdata.get("name")))
+    return total_jobs_scraped
 
 
 
@@ -102,4 +123,6 @@ def filter_internship_results(job_list):
 # filtered_jobs = filter_internship_results(unfiltered_jobs)
 # print(str(len(filtered_jobs)) + " " + str(len(unfiltered_jobs)))
 
-print(fetch_nvidia_data())
+unfiltered = fetch_nvidia_data()
+for item in filter_internship_results(unfiltered):
+    print(item.job_to_string())

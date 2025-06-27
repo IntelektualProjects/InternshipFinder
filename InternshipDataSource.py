@@ -10,6 +10,53 @@ class WorkdayFetch:
         self.intern_code = intern_code
         self.us_code = us_code
 
+    def get_facets(self):
+        # Send a base POST request to retrieve available facetFields.
+        headers = {
+            "Content-Type": "application/json",
+            "User-Agent": "Mozilla/5.0",
+            "Accept": "application/json"
+        }
+
+        payload = {
+            "appliedFacets": {},
+            "searchText": "",
+            "limit": 1,
+            "offset": 0
+        }
+
+        response = requests.post(self.url, headers=headers, json=payload)
+        if response.status_code != 200:
+            print(f"Failed to fetch facets: {response.status_code}")
+            return []
+        return response.json().get("facets", [])
+
+    def get_facet_field(self, facets, label_name):
+        # Finds the internal facetField given a user-facing label.
+        for facet in facets:
+            if label_name.lower() in facet.get("facetParameter"):
+                return facet
+        return None
+
+    def LocationFiltration(self):
+
+        facets = self.get_facets()
+        location_facet = self.get_facet_field(facets, "Location")
+
+        location_internal_filters = location_facet.get('values')
+        for internal_filter in location_internal_filters:
+            name = internal_filter.get('descriptor')
+            if "location" in name.lower():
+                values = name.get('values')
+
+
+
+
+
+
+
+
+
     def ObtainWorkdayData(self):
         headers = {
             "Content-Type": "application/json",
@@ -20,7 +67,7 @@ class WorkdayFetch:
         payload = {
             "appliedFacets": {
                 # United States location ID
-                "locationHierarchy1": [self.us_code],
+                "Location_Country": [self.us_code],
                 # Intern subtype ID (optional, but narrows results)
                 "workerSubType": [self.intern_code]
             },
@@ -48,6 +95,10 @@ class WorkdayFetch:
         }
 
         response = requests.post(self.url, headers=headers, json=payload)
+
+        if response.status_code != 200:
+            print("OH FUCK " + str(response.status_code))
+
         data = response.json()
         jobs = data.get("jobPostings", [])
         job_paths = [job.get("externalPath") for job in jobs]

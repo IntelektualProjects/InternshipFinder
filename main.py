@@ -64,6 +64,10 @@ def filter_internship_results(job_list):
 # filtered_jobs = filter_internship_results(unfiltered_jobs)
 # print(str(len(filtered_jobs)) + " " + str(len(unfiltered_jobs)))
 
-unfiltered = WorkdayFetch(url = "https://nvidia.wd5.myworkdayjobs.com/wday/cxs/nvidia/NVIDIAExternalCareerSite/jobs", intern_code=config.nvidia_intern_code, us_code = config.nvidia_US_code)
-for item in filter_internship_results(unfiltered.ObtainWorkdayData()):
-    print(item.job_to_string())
+unfiltered = WorkdayFetch(url = test_urls[2], intern_code=config.cadence_intern_code, us_code = config.cadence_us_code)
+unfiltered2 = WorkdayFetch(url = test_urls[0], intern_code=config.nvidia_intern_code, us_code = config.nvidia_us_code)
+unfiltered3 = WorkdayFetch(url= test_urls[1], intern_code=config.cadence_intern_code, us_code = config.cadence_us_code)
+unfiltered2.LocationFiltration()
+#unfiltered.testing()
+#unfiltered3.testing()
+# print(unfiltered2.ObtainWorkdayData())

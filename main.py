@@ -67,7 +67,7 @@ def filter_internship_results(job_list):
 unfiltered = WorkdayFetch(url = test_urls[2], intern_code=config.cadence_intern_code, us_code = config.cadence_us_code)
 unfiltered2 = WorkdayFetch(url = test_urls[0], intern_code=config.nvidia_intern_code, us_code = config.nvidia_us_code)
 unfiltered3 = WorkdayFetch(url= test_urls[1], intern_code=config.cadence_intern_code, us_code = config.cadence_us_code)
-unfiltered2.LocationFiltration()
+print(unfiltered2.worktypefiltration())
 #unfiltered.testing()
 #unfiltered3.testing()
 # print(unfiltered2.ObtainWorkdayData())

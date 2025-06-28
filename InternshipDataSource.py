@@ -38,7 +38,8 @@ class WorkdayFetch:
                 return facet
         return None
 
-    def LocationFiltration(self):
+    def locationfiltration(self):
+        united_states_descriptors = ["us", "united states", "u.s", "america", "united states of america"]
 
         facets = self.get_facets()
         location_facet = self.get_facet_field(facets, "Location")
@@ -47,17 +48,25 @@ class WorkdayFetch:
         for internal_filter in location_internal_filters:
             name = internal_filter.get('descriptor')
             if "location" in name.lower():
-                values = name.get('values')
+                values = internal_filter.get('values')
+                for option in values:
+                    if option.get('descriptor').lower() in united_states_descriptors:
+                        return internal_filter.get('facetParameter'), option.get('id')
+        return "No ID Found"
+
+    def worktypefiltration(self):
+        facets = self.get_facets()
+        worktype_facet = self.get_facet_field(facets, "worker")
+
+        worker_internal_filters = worktype_facet.get('values')
+        for internal_filter in worker_internal_filters:
+            name = internal_filter.get('descriptor')
+            if "intern" in name.lower():
+                return worktype_facet.get("facetParameter"), internal_filter.get('id')
+        return "No Filter Found"
 
 
-
-
-
-
-
-
-
-    def ObtainWorkdayData(self):
+    def obtainworkdaydata(self):
         headers = {
             "Content-Type": "application/json",
             "User-Agent": "Mozilla/5.0",

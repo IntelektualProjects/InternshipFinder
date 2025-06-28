@@ -106,7 +106,7 @@ class WorkdayFetch:
         response = requests.post(self.url, headers=headers, json=payload)
 
         if response.status_code != 200:
-            print("OH FUCK " + str(response.status_code))
+            return "Bad HTTP Request: " + str(response.status_code)
 
         data = response.json()
         jobs = data.get("jobPostings", [])

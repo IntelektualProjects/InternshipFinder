@@ -13,6 +13,8 @@ class Job:
     def job_to_string(self):
         string = StringIO()
         string.write("Title: " + self.title + "\n")
+        string.write("Requisition ID: " + str(self.req_id) + "\n")
+        string.write("Company: " + self.company + "\n")
         string.write("Date Posted: " + self.date_posted + "\n")
         string.write("Apply URL: " + self.apply_url + "\n")
         string.write("Company: " + self.company + "\n")

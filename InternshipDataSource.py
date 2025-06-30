@@ -28,34 +28,44 @@ class WorkdayFetch:
             return []
         return response.json().get("facets", [])
 
-    def get_facet_field(self, facets, label_name):
+
+
+    def get_facet_field(self, facets, labels):
         # Finds the internal facetField given a user-facing label.
         for facet in facets:
-            if label_name.lower() in (facet.get("facetParameter")).lower():
-                return facet
+            for label in labels:
+                if label.lower() in (facet.get("facetParameter")).lower():
+                    return facet
         return None
+
+
 
     def locationfiltration(self):
         united_states_descriptors = ["us", "united states", "u.s", "america", "united states of america"]
 
         facets = self.get_facets()
-        location_facet = self.get_facet_field(facets, "location")
+        location_facet = self.get_facet_field(facets, ["country", "location"])
 
         location_internal_filters = location_facet.get('values')
         for internal_filter in location_internal_filters:
             name = internal_filter.get('descriptor')
+
             if name.lower() in united_states_descriptors:
                 return location_facet.get('facetParameter'), internal_filter.get('id')
+
             if ("location" in name.lower()) or ('country' in name.lower()):
                 values = internal_filter.get('values')
                 for option in values:
                     if option.get('descriptor').lower() in united_states_descriptors:
                         return internal_filter.get('facetParameter'), option.get('id')
+
         return "No Location Found"
+
+
 
     def worktypefiltration(self):
         facets = self.get_facets()
-        worktype_facet = self.get_facet_field(facets, "worker")
+        worktype_facet = self.get_facet_field(facets, ["worker"])
 
         worker_internal_filters = worktype_facet.get('values')
         for internal_filter in worker_internal_filters:
@@ -64,7 +74,9 @@ class WorkdayFetch:
                 return worktype_facet.get("facetParameter"), internal_filter.get('id')
         return "No Worktype Found"
 
-    def base_payload():
+
+
+    def base_payload(self):
         return {
             "appliedFacets": {},
             "limit": 20,
@@ -89,6 +101,8 @@ class WorkdayFetch:
                 {"facetName": "teams", "filterType": "MULTI"}
             ]
         }
+
+
 
     def filter_payload(self, location, worker):
         return {
@@ -121,6 +135,8 @@ class WorkdayFetch:
             ]
         }
 
+
+
     def obtain_workday_data(self):
         headers = {
             "Content-Type": "application/json",
@@ -135,10 +151,8 @@ class WorkdayFetch:
 
         if locationfilter == "No Location Found" or worktypefilter == "No Worktype Found":
             payload = self.base_payload()
-
         else:
             payload = self.filter_payload(locationfilter, worktypefilter)
-
 
         response = requests.post(self.url, headers=headers, json=payload)
 

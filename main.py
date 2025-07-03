@@ -12,7 +12,8 @@ test_urls = ["https://nvidia.wd5.myworkdayjobs.com/wday/cxs/nvidia/NVIDIAExterna
              "https://analogdevices.wd1.myworkdayjobs.com/wday/cxs/analogdevices/External/jobs",
              "https://cadence.wd1.myworkdayjobs.com/wday/cxs/cadence/External_Careers/jobs",
              "https://marvell.wd1.myworkdayjobs.com/wday/cxs/marvell/MarvellCareers/jobs",
-             "https://intel.wd1.myworkdayjobs.com/wday/cxs/intel/External/jobs"]
+             "https://intel.wd1.myworkdayjobs.com/wday/cxs/intel/External/jobs",
+             "https://broadcom.wd1.myworkdayjobs.com/wday/cxs/broadcom/External_Career/jobs"]
 
 
 def fetch_raw_intern_data(page):
@@ -69,5 +70,6 @@ unfiltered2 = WorkdayFetch(url = test_urls[0])
 unfiltered3 = WorkdayFetch(url= test_urls[3])
 
 r = unfiltered3.obtain_workday_data()
+print(r)
 for i in r:
     print(Job.job_to_string(i))

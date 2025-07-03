@@ -150,7 +150,7 @@
       <option name="presentableId" value="Default" />
       <updated>1750951545663</updated>
       <workItem from="1750951546709" duration="36590000" />
-      <workItem from="1751069202667" duration="9979000" />
+      <workItem from="1751069202667" duration="16804000" />
     </task>
     <servers />
   </component>
@@ -171,6 +171,6 @@
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/InternshipReminder$Node.coverage" NAME="Node Coverage Results" MODIFIED="1750965534539" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/InternshipReminder$Job__1_.coverage" NAME="Job (1) Coverage Results" MODIFIED="1750969533119" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/InternshipReminder$main.coverage" NAME="main Coverage Results" MODIFIED="1751294453252" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/InternshipReminder$main.coverage" NAME="main Coverage Results" MODIFIED="1751301256120" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

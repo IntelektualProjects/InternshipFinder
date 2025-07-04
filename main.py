@@ -67,9 +67,8 @@ def filter_internship_results(job_list):
 
 unfiltered = WorkdayFetch(url = test_urls[2])
 unfiltered2 = WorkdayFetch(url = test_urls[0])
-unfiltered3 = WorkdayFetch(url= test_urls[3])
+unfiltered3 = WorkdayFetch(url= test_urls[5])
 
 r = unfiltered3.obtain_workday_data()
-print(r)
 for i in r:
     print(Job.job_to_string(i))

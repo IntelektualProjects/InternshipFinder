@@ -42,11 +42,24 @@ class WorkdayFetch:
 
     def locationfiltration(self):
         united_states_descriptors = ["us", "united states", "u.s", "america", "united states of america"]
+        us_states = ["AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA",
+                     "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD",
+                     "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ",
+                     "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC",
+                     "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"]
+
+        facets = self.get_facets()
+        loc_facet = self.get_facet_field(facets, ["country", "location"])
+        if not loc_facet:
+            return None
+
 
         facets = self.get_facets()
         location_facet = self.get_facet_field(facets, ["country", "location"])
 
         location_internal_filters = location_facet.get('values')
+
+        # try to find a direct United States filter (country-level)
         for internal_filter in location_internal_filters:
             name = internal_filter.get('descriptor')
 
@@ -59,7 +72,25 @@ class WorkdayFetch:
                     if option.get('descriptor').lower() in united_states_descriptors:
                         return internal_filter.get('facetParameter'), option.get('id')
 
-        return "No Location Found"
+        listed_us_locations = []
+        facetparameter = ""
+        for internal_filter in location_internal_filters:
+            nested_values = internal_filter.get("values")
+            for value in nested_values:
+                descriptor = value.get("descriptor").lower()
+
+                # Match either a US descriptor or a US state abbreviation
+                if any(us_desc in descriptor.lower() for us_desc in united_states_descriptors) or \
+                        any(state in descriptor.upper() for state in us_states):
+
+                    # Return the parent facet parameter and the matched ID
+                    listed_us_locations.append(value.get('id'))
+            facetparameter = internal_filter.get('facetParameter')
+
+
+        if len(listed_us_locations) == 0:
+            return None
+        return facetparameter, listed_us_locations
 
 
 
@@ -72,7 +103,7 @@ class WorkdayFetch:
             name = internal_filter.get('descriptor')
             if "intern" in name.lower():
                 return worktype_facet.get("facetParameter"), internal_filter.get('id')
-        return "No Worktype Found"
+        return None
 
 
 
@@ -102,15 +133,24 @@ class WorkdayFetch:
             ]
         }
 
-
-
     def filter_payload(self, location, worker):
+        loc_key, loc_vals = location
+
+        # If loc_vals is not already a list, wrap it in one.
+        if not isinstance(loc_vals, list):
+            loc_vals = [loc_vals]
+
+        # Same for the work‑type facet (though that one is always a single ID)
+        wk_key, wk_val = worker
+        if not isinstance(wk_val, list):
+            wk_val = [wk_val]
+
         return {
             "appliedFacets": {
                 # United States location ID
-                location[0]: [location[1]],
+                loc_key: loc_vals,
                 # Intern subtype ID
-                worker[0]: [worker[1]],
+                wk_key: wk_val,
             },
             "limit": 20,
             "offset": 0,
@@ -125,9 +165,9 @@ class WorkdayFetch:
                 "teams": []
             },
             "facetCriteria": [
-                {"facetName": location[0], "filterType": "MULTI"},  # ← FIXED
+                {"facetName": loc_key, "filterType": "MULTI"},  # ← FIXED
                 {"facetName": "timeType", "filterType": "MULTI"},
-                {"facetName": "workerSubType", "filterType": "MULTI"},
+                {"facetName": wk_key, "filterType": "MULTI"},
                 {"facetName": "categories", "filterType": "MULTI"},
                 {"facetName": "jobFamilyGroup", "filterType": "MULTI"},
                 {"facetName": "jobFamily", "filterType": "MULTI"},
@@ -149,7 +189,7 @@ class WorkdayFetch:
         print("locationfilter:", locationfilter)
         print("worktypefilter:", worktypefilter)
 
-        if locationfilter == "No Location Found" or worktypefilter == "No Worktype Found":
+        if locationfilter is None or worktypefilter is None:
             payload = self.base_payload()
         else:
             payload = self.filter_payload(locationfilter, worktypefilter)

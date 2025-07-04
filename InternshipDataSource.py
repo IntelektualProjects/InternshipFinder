@@ -134,24 +134,34 @@ class WorkdayFetch:
         }
 
     def filter_payload(self, location, worker):
-        loc_key, loc_vals = location
+        applied_facets = {}
+        facet_criteria = []
 
-        # If loc_vals is not already a list, wrap it in one.
-        if not isinstance(loc_vals, list):
-            loc_vals = [loc_vals]
+        # If a location filter was found
+        if location:
+            loc_key, loc_vals = location
+            if not isinstance(loc_vals, list):
+                loc_vals = [loc_vals]
+            applied_facets[loc_key] = loc_vals
+            facet_criteria.append({"facetName": loc_key, "filterType": "MULTI"})
 
-        # Same for the work‑type facet (though that one is always a single ID)
-        wk_key, wk_val = worker
-        if not isinstance(wk_val, list):
-            wk_val = [wk_val]
+        # If a worker (e.g., intern) filter was found
+        if worker:
+            wk_key, wk_val = worker
+            if not isinstance(wk_val, list):
+                wk_val = [wk_val]
+            applied_facets[wk_key] = wk_val
+            facet_criteria.append({"facetName": wk_key, "filterType": "MULTI"})
+
+        # Add static filters (these remain unchanged)
+        static_filters = [
+            "timeType", "categories", "jobFamilyGroup", "jobFamily", "teams"
+        ]
+        for field in static_filters:
+            facet_criteria.append({"facetName": field, "filterType": "MULTI"})
 
         return {
-            "appliedFacets": {
-                # United States location ID
-                loc_key: loc_vals,
-                # Intern subtype ID
-                wk_key: wk_val,
-            },
+            "appliedFacets": applied_facets,
             "limit": 20,
             "offset": 0,
             "searchText": "intern",
@@ -164,18 +174,8 @@ class WorkdayFetch:
                 "jobFamily": [],
                 "teams": []
             },
-            "facetCriteria": [
-                {"facetName": loc_key, "filterType": "MULTI"},  # ← FIXED
-                {"facetName": "timeType", "filterType": "MULTI"},
-                {"facetName": wk_key, "filterType": "MULTI"},
-                {"facetName": "categories", "filterType": "MULTI"},
-                {"facetName": "jobFamilyGroup", "filterType": "MULTI"},
-                {"facetName": "jobFamily", "filterType": "MULTI"},
-                {"facetName": "teams", "filterType": "MULTI"}
-            ]
+            "facetCriteria": facet_criteria
         }
-
-
 
     def obtain_workday_data(self):
         headers = {
@@ -189,10 +189,7 @@ class WorkdayFetch:
         print("locationfilter:", locationfilter)
         print("worktypefilter:", worktypefilter)
 
-        if locationfilter is None or worktypefilter is None:
-            payload = self.base_payload()
-        else:
-            payload = self.filter_payload(locationfilter, worktypefilter)
+        payload = self.filter_payload(locationfilter, worktypefilter)
 
         response = requests.post(self.url, headers=headers, json=payload)
 

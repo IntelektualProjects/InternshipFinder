@@ -1,11 +1,7 @@
-from operator import indexOf
-
 import requests
-import json
 
-import config
 from Job import Job
-from InternshipDataSource import WorkdayFetch
+from WorkdayFetch import WorkdayFetch
 
 filter_words = ["Bachelor", "B.S", "Undergrad", "BS"]
 test_urls = ["https://nvidia.wd5.myworkdayjobs.com/wday/cxs/nvidia/NVIDIAExternalCareerSite/jobs",

@@ -17,7 +17,6 @@ class Job:
         string.write("Company: " + self.company + "\n")
         string.write("Date Posted: " + self.date_posted + "\n")
         string.write("Apply URL: " + self.apply_url + "\n")
-        string.write("Company: " + self.company + "\n")
         string.write("Description: " + self.description + "\n")
 
         return string.getvalue()

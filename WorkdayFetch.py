@@ -186,8 +186,8 @@ class WorkdayFetch:
 
         locationfilter = self.locationfiltration()
         worktypefilter = self.worktypefiltration()
-        print("locationfilter:", locationfilter)
-        print("worktypefilter:", worktypefilter)
+        #print("locationfilter:", locationfilter)
+        #print("worktypefilter:", worktypefilter)
 
         payload = self.filter_payload(locationfilter, worktypefilter)
 

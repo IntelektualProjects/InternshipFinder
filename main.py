@@ -1,7 +1,15 @@
 import requests
+from plyer import notification
+from datetime import datetime
+from time import sleep
+import os
 
 from Job import Job
 from WorkdayFetch import WorkdayFetch
+from SheetsIntegration import SheetsIntegration
+from JobTypeFiltration import JobTypeFiltration
+
+import config
 
 filter_words = ["Bachelor", "B.S", "Undergrad", "BS"]
 test_urls = ["https://nvidia.wd5.myworkdayjobs.com/wday/cxs/nvidia/NVIDIAExternalCareerSite/jobs",
@@ -13,59 +21,28 @@ test_urls = ["https://nvidia.wd5.myworkdayjobs.com/wday/cxs/nvidia/NVIDIAExterna
              "https://nxp.wd3.myworkdayjobs.com/wday/cxs/nxp/careers/jobs"]
 
 
-def fetch_raw_intern_data(page):
-    url = "https://careers.amd.com/api/jobs"
-    params = {
-        "keywords": "intern",
-        "sortBy": "posted_date",
-        "page": page,
-        "internal": "false",
-        "country": "United%20States",
-        "limit": 100
-    }
+# START OF RUNTIME PROGRAM
+gsheet_endpoints = SheetsIntegration(config.spreadsheet_backend_id, config.url_base_range)
+endpoints = gsheet_endpoints.get_endpoints_from_sheet()
 
-    resp = requests.get(url, params=params)
-    resp.raise_for_status()
-    data = resp.json()
+job_listings_today = []
+hiring_org_set = set()
+# For workday listings (no site sorting or job filtration implemented yet)
+for ep in endpoints:
+    job_from_endpoint = WorkdayFetch(url=ep["url"])
+    job_listings_from_company = job_from_endpoint.obtain_workday_data()
 
-    # this endpoint returns an object with a "jobs" list
-    jobs = data.get("jobs", [])
+    if len(job_listings_from_company) != 0:
+        job_listings_today.extend(job_listings_from_company)
+        for j in job_listings_from_company:
+            print(Job.job_to_string(j))
+        hiring_org_set.add(ep["company"])
+        print(f"Company Data Acquisition Successful\n {ep['company']}: {len(job_listings_today)}\n")
 
-    # extract and return "data" key in each job listing
-    job_data_list = [job.get("data") for job in jobs]
-
-    total_jobs_scraped = []
-
-    for job in job_data_list:
-        total_jobs_scraped.append(Job(
-            req_id=job.get("req_id"),
-            title=job.get("title"),
-            posted_date=job.get("posted_date"),
-            apply_url=job.get("apply_url"),
-            description=job.get("description"),
-            company=job.get("hiring_organization")))
-
-    return total_jobs_scraped
-
-def filter_internship_results(job_list):
-    newlist = []
-
-    for item in job_list:
-        for keyword in filter_words:
-            if (keyword in item.title) or (keyword in item.description):
-                newlist.append(item)
-
-    return newlist
-
-
-# unfiltered_jobs = fetch_raw_intern_data(page=1)
-# filtered_jobs = filter_internship_results(unfiltered_jobs)
-# print(str(len(filtered_jobs)) + " " + str(len(unfiltered_jobs)))
-
-unfiltered = WorkdayFetch(url = test_urls[2])
-unfiltered2 = WorkdayFetch(url = test_urls[0])
-unfiltered3 = WorkdayFetch(url= test_urls[2])
-
-r = unfiltered3.obtain_workday_data()
-for i in r:
-    print(Job.job_to_string(i))
+notification.notify(
+    title=f"New InternshipFinder Listings: {len(job_listings_today)}",
+    message=f"Companies: {', '.join(hiring_org_set)}",
+    timeout=25
+)
+# waiting time
+sleep(7)

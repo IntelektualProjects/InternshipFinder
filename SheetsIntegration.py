@@ -8,7 +8,6 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 
 from config import spreadsheet_backend_id,url_base_range
-from Job import Job
 
 
 class SheetsIntegration:
@@ -132,7 +131,7 @@ class SheetsIntegration:
             values = result.get("values", [])
 
             if not values:
-                print("No endpoint rows found.")
+                print("No Job Website Endpoints Found.")
                 return []
 
             # Expecting format: [company, url]
@@ -140,7 +139,7 @@ class SheetsIntegration:
             for row in values:
                 if len(row) >= 2:
                     endpoints.append({"company": row[0], "url": row[1]})
-            print(f"{len(endpoints)} endpoint rows retrieved.")
+            print(f"{len(endpoints)} Job Website Endpoints Retrieved.")
             return endpoints
 
         except HttpError as error:
@@ -148,11 +147,15 @@ class SheetsIntegration:
             return []
 
 ############ EXAMPLE USAGES ##################
-gsheet = SheetsIntegration(spreadsheet_backend_id, url_base_range)
+#gsheet = SheetsIntegration(spreadsheet_backend_id, url_base_range)
 
-#endpoints = gsheet.add_endpoint_to_sheet("Broadcom", "https://broadcom.wd1.myworkdayjobs.com/wday/cxs/broadcom/External_Career/jobs")
+# ADD a website endpoint to the google sheet
+# endpoints = gsheet.add_endpoint_to_sheet("Broadcom", "https://broadcom.wd1.myworkdayjobs.com/wday/cxs/broadcom/External_Career/jobs")
 
-endpoints = gsheet.get_endpoints_from_sheet()
-for ep in endpoints:
-    print(f"{ep['company']}: {ep['url']}")
+# GET all the website endpoints from the sheet
+# endpoints = gsheet.get_endpoints_from_sheet()
+# for ep in endpoints:
+#    print(f"{ep['company']}: {ep['url']}")
+
+
 

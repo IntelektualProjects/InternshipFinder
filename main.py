@@ -1,8 +1,6 @@
 import requests
 from plyer import notification
-from datetime import datetime
 from time import sleep
-import os
 
 from Job import Job
 from WorkdayFetch import WorkdayFetch
@@ -34,11 +32,11 @@ for ep in endpoints:
 
     if len(job_listings_from_company) != 0:
         job_listings_today.extend(job_listings_from_company)
-        for j in job_listings_from_company:
-            print(Job.job_to_string(j))
         hiring_org_set.add(ep["company"])
-        print(f"Company Data Acquisition Successful\n {ep['company']}: {len(job_listings_today)}\n")
 
+        print(f"Company Data Acquisition Successful\n {ep['company']}: {len(job_listings_from_company)}\n")
+
+# Notification Generation for Desktop
 notification.notify(
     title=f"New InternshipFinder Listings: {len(job_listings_today)}",
     message=f"Companies: {', '.join(hiring_org_set)}",

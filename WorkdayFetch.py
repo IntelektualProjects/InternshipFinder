@@ -105,34 +105,6 @@ class WorkdayFetch:
                 return worktype_facet.get("facetParameter"), internal_filter.get('id')
         return None
 
-
-
-    def base_payload(self):
-        return {
-            "appliedFacets": {},
-            "limit": 20,
-            "offset": 0,
-            "searchText": "intern",
-            "searchFilters": {
-                "locations": [],
-                "timeType": [],
-                "workerSubType": [],
-                "categories": [],
-                "jobFamilyGroup": [],
-                "jobFamily": [],
-                "teams": []
-            },
-            "facetCriteria": [
-                {"facetName": "location", "filterType": "MULTI"},  # ← FIXED
-                {"facetName": "timeType", "filterType": "MULTI"},
-                {"facetName": "workerSubType", "filterType": "MULTI"},
-                {"facetName": "categories", "filterType": "MULTI"},
-                {"facetName": "jobFamilyGroup", "filterType": "MULTI"},
-                {"facetName": "jobFamily", "filterType": "MULTI"},
-                {"facetName": "teams", "filterType": "MULTI"}
-            ]
-        }
-
     def filter_payload(self, location, worker):
         applied_facets = {}
         facet_criteria = []
@@ -186,8 +158,8 @@ class WorkdayFetch:
 
         locationfilter = self.locationfiltration()
         worktypefilter = self.worktypefiltration()
-        #print("locationfilter:", locationfilter)
-        #print("worktypefilter:", worktypefilter)
+        print("locationfilter:", locationfilter)
+        print("worktypefilter:", worktypefilter)
 
         payload = self.filter_payload(locationfilter, worktypefilter)
 

@@ -94,7 +94,7 @@ class SheetsIntegration:
             ).execute()
 
             updates = result.get("updates", {})
-            print(f"Added row to {updates.get('updatedRange')}")
+            #print(f"Added row to {updates.get('updatedRange')}")
             return True
 
         except HttpError as error:

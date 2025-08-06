@@ -1,8 +1,6 @@
-import requests
-from plyer import notification
-from time import sleep
 
-from Job import Job
+from plyer import notification
+
 from WorkdayFetch import WorkdayFetch
 from SheetsIntegration import SheetsIntegration
 from JobTypeFiltration import JobTypeFiltration
@@ -25,27 +23,28 @@ endpoints = gsheet_endpoints.get_endpoints_from_sheet()
 
 gsheet_jobentries = SheetsIntegration(config.spreadsheet_backend_id, config.job_sheet_range)
 
-job_listings_today = []
+job_listings_today = 0
 hiring_org_set = set()
 # For workday listings (no site sorting or job filtration implemented yet)
 for ep in endpoints:
     job_from_endpoint = WorkdayFetch(url=ep["url"])
     job_listings_from_company = job_from_endpoint.obtain_workday_data()
 
-    if len(job_listings_from_company) != 0:
-        job_listings_today.extend(job_listings_from_company)
+    filtering_object = JobTypeFiltration(job_listings_from_company)
+    filtered_job_listings = filtering_object.internship_filter_multiple_jobs()
+
+    if len(filtered_job_listings) != 0:
+        job_listings_today += len(filtered_job_listings)
         hiring_org_set.add(ep["company"])
 
-        for entry in job_listings_from_company:
+        for entry in filtered_job_listings:
             gsheet_jobentries.add_job_entry(entry)
 
-        print(f"Company Data Acquisition Successful\n {ep['company']}: {len(job_listings_from_company)}\n")
+        print(f"Company Data Acquisition Successful\n {ep['company']}: {len(filtered_job_listings)}\n")
 
 # Notification Generation for Desktop
 notification.notify(
-    title=f"New InternshipFinder Listings: {len(job_listings_today)}",
+    title=f"New InternshipFinder Listings: {job_listings_today}",
     message=f"Companies: {', '.join(hiring_org_set)}",
     timeout=25
 )
-# waiting time
-sleep(7)

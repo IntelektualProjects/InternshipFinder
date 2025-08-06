@@ -182,10 +182,11 @@ class WorkdayFetch:
             jobhiringdata = data2.get("hiringOrganization")
 
             total_jobs_scraped.append(Job(
-                req_id=jobpostingdata.get("jobReqID"),
+                req_id=jobpostingdata.get("jobReqId"),
                 title=jobpostingdata.get("jobPostingId"),
                 posted_date=jobpostingdata.get("postedOn"),
                 apply_url=jobpostingdata.get("externalUrl"),
                 description=jobpostingdata.get("jobDescription"),
                 company=jobhiringdata.get("name")))
+
         return total_jobs_scraped

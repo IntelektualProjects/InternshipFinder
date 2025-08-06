@@ -7,16 +7,6 @@ from JobTypeFiltration import JobTypeFiltration
 
 import config
 
-filter_words = ["Bachelor", "B.S", "Undergrad", "BS"]
-test_urls = ["https://nvidia.wd5.myworkdayjobs.com/wday/cxs/nvidia/NVIDIAExternalCareerSite/jobs",
-             "https://analogdevices.wd1.myworkdayjobs.com/wday/cxs/analogdevices/External/jobs",
-             "https://cadence.wd1.myworkdayjobs.com/wday/cxs/cadence/External_Careers/jobs",
-             "https://marvell.wd1.myworkdayjobs.com/wday/cxs/marvell/MarvellCareers/jobs",
-             "https://intel.wd1.myworkdayjobs.com/wday/cxs/intel/External/jobs",
-             "https://broadcom.wd1.myworkdayjobs.com/wday/cxs/broadcom/External_Career/jobs",
-             "https://nxp.wd3.myworkdayjobs.com/wday/cxs/nxp/careers/jobs"]
-
-
 # START OF RUNTIME PROGRAM
 gsheet_endpoints = SheetsIntegration(config.spreadsheet_backend_id, config.url_base_range)
 endpoints = gsheet_endpoints.get_endpoints_from_sheet()

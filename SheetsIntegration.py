@@ -174,7 +174,7 @@ class SheetsIntegration:
 #gsheet = SheetsIntegration(spreadsheet_backend_id, url_base_range)
 
 # ADD a website endpoint to the google sheet
-# endpoints = gsheet.add_endpoint_to_sheet("Broadcom", "https://broadcom.wd1.myworkdayjobs.com/wday/cxs/broadcom/External_Career/jobs")
+# endpoints = gsheet.add_endpoint_to_sheet("Company name", "example JSON link")
 
 # GET all the website endpoints from the sheet
 # endpoints = gsheet.get_endpoints_from_sheet()

@@ -134,16 +134,16 @@ class WorkdayFetch:
             "limit": 20,
             "offset": 0,
             "searchText": "intern",
-            "searchFilters": {
-                "locations": [],
-                "timeType": [],
-                "workerSubType": [],
-                "categories": [],
-                "jobFamilyGroup": [],
-                "jobFamily": [],
-                "teams": []
-            },
-            "facetCriteria": facet_criteria
+            # "searchFilters": {
+            #     "locations": [],
+            #     "timeType": [],
+            #     "workerSubType": [],
+            #     "categories": [],
+            #     "jobFamilyGroup": [],
+            #     "jobFamily": [],
+            #     "teams": []
+            # },
+            # "facetCriteria": facet_criteria
         }
 
     def obtain_workday_data(self):
@@ -155,8 +155,8 @@ class WorkdayFetch:
 
         locationfilter = self.locationfiltration()
         worktypefilter = self.worktypefiltration()
-        print("locationfilter:", locationfilter)
-        print("worktypefilter:", worktypefilter)
+        # print("locationfilter:", locationfilter)
+        # print("worktypefilter:", worktypefilter)
 
         if worktypefilter is None:
             return []

@@ -113,7 +113,7 @@ class SheetsIntegration:
                 if creds and creds.expired and creds.refresh_token:
                     creds.refresh(Request())
                 else:
-                    flow = InstalledAppFlow.from_client_secrets_file("credentials.json", self.SCOPES)
+                    flow = InstalledAppFlow.from_client_secrets_file(r"C:\Users\kakup\PycharmProjects\InternshipReminder\credentials.json", self.SCOPES)
                     creds = flow.run_local_server(port=0)
                 with open("token.json", "w") as token:
                     token.write(creds.to_json())

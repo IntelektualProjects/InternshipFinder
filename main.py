@@ -23,6 +23,8 @@ test_urls = ["https://nvidia.wd5.myworkdayjobs.com/wday/cxs/nvidia/NVIDIAExterna
 gsheet_endpoints = SheetsIntegration(config.spreadsheet_backend_id, config.url_base_range)
 endpoints = gsheet_endpoints.get_endpoints_from_sheet()
 
+gsheet_jobentries = SheetsIntegration(config.spreadsheet_backend_id, config.job_sheet_range)
+
 job_listings_today = []
 hiring_org_set = set()
 # For workday listings (no site sorting or job filtration implemented yet)
@@ -33,6 +35,9 @@ for ep in endpoints:
     if len(job_listings_from_company) != 0:
         job_listings_today.extend(job_listings_from_company)
         hiring_org_set.add(ep["company"])
+
+        for entry in job_listings_from_company:
+            gsheet_jobentries.add_job_entry(entry)
 
         print(f"Company Data Acquisition Successful\n {ep['company']}: {len(job_listings_from_company)}\n")
 

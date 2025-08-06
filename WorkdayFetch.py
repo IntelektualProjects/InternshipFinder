@@ -1,4 +1,5 @@
 import requests
+import re
 
 from Job import Job
 
@@ -41,12 +42,10 @@ class WorkdayFetch:
 
 
     def locationfiltration(self):
-        united_states_descriptors = ["us", "united states", "u.s", "america", "united states of america"]
-        us_states = ["AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA",
-                     "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD",
-                     "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ",
-                     "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC",
-                     "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"]
+        united_states_descriptors = [
+        re.compile(r"\b(us,|us\b|u\.s\b|u\.s\.a\b|united states\b|america\b|united states of america\b|usa\b)", re.IGNORECASE)]
+
+        united_states_base_descriptors = ["us,", "united states", "u.s", "america", "united states of america", 'usa']
 
         facets = self.get_facets()
         loc_facet = self.get_facet_field(facets, ["country", "location"])
@@ -63,13 +62,13 @@ class WorkdayFetch:
         for internal_filter in location_internal_filters:
             name = internal_filter.get('descriptor')
 
-            if name.lower() in united_states_descriptors:
+            if any(pattern.search(name) for pattern in united_states_descriptors):
                 return location_facet.get('facetParameter'), internal_filter.get('id')
 
             if ("location" in name.lower()) or ('country' in name.lower()):
                 values = internal_filter.get('values')
                 for option in values:
-                    if option.get('descriptor').lower() in united_states_descriptors:
+                    if option.get('descriptor').lower() in united_states_base_descriptors:
                         return internal_filter.get('facetParameter'), option.get('id')
 
         listed_us_locations = []
@@ -79,10 +78,8 @@ class WorkdayFetch:
             for value in nested_values:
                 descriptor = value.get("descriptor").lower()
 
-                # Match either a US descriptor or a US state abbreviation
-                if any(us_desc in descriptor.lower() for us_desc in united_states_descriptors) or \
-                        any(state in descriptor.upper() for state in us_states):
-
+                # Match a US descriptor
+                if any(pattern.search(descriptor) for pattern in united_states_descriptors):
                     # Return the parent facet parameter and the matched ID
                     listed_us_locations.append(value.get('id'))
             facetparameter = internal_filter.get('facetParameter')
@@ -90,6 +87,7 @@ class WorkdayFetch:
 
         if len(listed_us_locations) == 0:
             return None
+        print("amount of locations:" + str(len(listed_us_locations)) + "\n")
         return facetparameter, listed_us_locations
 
 
@@ -161,6 +159,8 @@ class WorkdayFetch:
         print("locationfilter:", locationfilter)
         print("worktypefilter:", worktypefilter)
 
+        if worktypefilter is None:
+            return []
         payload = self.filter_payload(locationfilter, worktypefilter)
 
         response = requests.post(self.url, headers=headers, json=payload)

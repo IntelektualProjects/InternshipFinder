@@ -146,6 +146,30 @@ class SheetsIntegration:
             print(f"Google Sheets API error: {error}")
             return []
 
+    def get_reqid_from_sheet(self):
+        try:
+            # Choose auth method
+            creds = self.backend_authentication()
+
+            service = build("sheets", "v4", credentials=creds)
+            sheet = service.spreadsheets()
+            result = sheet.values().get(spreadsheetId=self.spreadsheet_id, range=self.spreadsheet_range).execute()
+            values = result.get("values", [])
+
+            if not values:
+                return set()
+
+            req_ids = set()
+            for row in values:
+                if len(row) > 1:  # Ensure req_id exists
+                    req_ids.add(row[1].strip())
+
+            return req_ids
+
+        except HttpError as error:
+            print(f"Google Sheets API error: {error}")
+            return []
+
 ############ EXAMPLE USAGES ##################
 #gsheet = SheetsIntegration(spreadsheet_backend_id, url_base_range)
 

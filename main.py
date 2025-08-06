@@ -23,9 +23,14 @@ endpoints = gsheet_endpoints.get_endpoints_from_sheet()
 
 gsheet_jobentries = SheetsIntegration(config.spreadsheet_backend_id, config.job_sheet_range)
 
+# Get all existing req_ids to avoid duplicates
+existing_req_ids = gsheet_jobentries.get_reqid_from_sheet()
+
+# Notification data variables
 job_listings_today = 0
 hiring_org_set = set()
-# For workday listings (no site sorting or job filtration implemented yet)
+
+# For workday listings (no site sorting)
 for ep in endpoints:
     job_from_endpoint = WorkdayFetch(url=ep["url"])
     job_listings_from_company = job_from_endpoint.obtain_workday_data()
@@ -34,11 +39,14 @@ for ep in endpoints:
     filtered_job_listings = filtering_object.internship_filter_multiple_jobs()
 
     if len(filtered_job_listings) != 0:
-        job_listings_today += len(filtered_job_listings)
-        hiring_org_set.add(ep["company"])
 
         for entry in filtered_job_listings:
-            gsheet_jobentries.add_job_entry(entry)
+            if str(entry.req_id) not in existing_req_ids:
+                gsheet_jobentries.add_job_entry(entry)
+                existing_req_ids.add(str(entry.req_id))
+                # update the notification variables
+                job_listings_today += 1
+                hiring_org_set.add(ep["company"])
 
         print(f"Company Data Acquisition Successful\n {ep['company']}: {len(filtered_job_listings)}\n")
 

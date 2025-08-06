@@ -87,7 +87,6 @@ class WorkdayFetch:
 
         if len(listed_us_locations) == 0:
             return None
-        print("amount of locations:" + str(len(listed_us_locations)) + "\n")
         return facetparameter, listed_us_locations
 
 

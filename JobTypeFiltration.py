@@ -28,7 +28,6 @@ class JobTypeFiltration:
         is_ece_related = any(keyword in combined_text for keyword in self.ece_keywords)
         is_undergrad = any(pattern.search(combined_text) for pattern in self.bachelors_patterns)
 
-        print(is_intern, is_ece_related, is_undergrad)
         return is_intern and is_ece_related and is_undergrad
 
     def internship_filter_multiple_jobs(self):

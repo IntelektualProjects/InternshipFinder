@@ -1,5 +1,5 @@
 
-from plyer import notification
+from winotify import Notification
 
 from WorkdayFetch import WorkdayFetch
 from SheetsIntegration import SheetsIntegration
@@ -41,8 +41,11 @@ for ep in endpoints:
         print(f"Company Data Acquisition Successful\n {ep['company']}: {len(filtered_job_listings)}\n")
 
 # Notification Generation for Desktop
-notification.notify(
+toast = Notification(
+    app_id="InternshipFinder",
     title=f"New InternshipFinder Listings: {job_listings_today}",
-    message=f"Companies: {', '.join(hiring_org_set)}",
-    timeout=25
+    msg=f"Companies: {', '.join(hiring_org_set)}",
+    duration="long"
 )
+# Show the notification
+toast.show()

@@ -186,6 +186,7 @@ class WorkdayFetch:
                 posted_date=jobpostingdata.get("postedOn"),
                 apply_url=jobpostingdata.get("externalUrl"),
                 description=jobpostingdata.get("jobDescription"),
-                company=jobhiringdata.get("name")))
+                # parsing url in or statement of company field for company name in case the JSON doesn't have .name field
+                company=jobhiringdata.get("name") or self.url[self.url.index("https://") + len("https://"):self.url.index(".")]))
 
         return total_jobs_scraped

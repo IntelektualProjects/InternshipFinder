@@ -170,6 +170,30 @@ class SheetsIntegration:
             print(f"Google Sheets API error: {error}")
             return []
 
+
+    def update_posted_date(self, new_date, req_id_ref):
+        try:
+            # Choose auth method
+            creds = self.backend_authentication()
+
+            service = build("sheets", "v4", credentials=creds)
+            sheet = service.spreadsheets()
+            result = sheet.values().get(spreadsheetId=self.spreadsheet_id, range=self.spreadsheet_range).execute()
+            values = result.get("values", [])
+
+            if not values:
+                return set()
+
+            req_ids = set()
+            for row in values:
+                if req_id_ref == row[1]:
+                    row[3] = new_date
+
+        except HttpError as error:
+            print(f"Google Sheets API error: {error}")
+            return []
+
+
 ############ EXAMPLE USAGES ##################
 #gsheet = SheetsIntegration(spreadsheet_backend_id, url_base_range)
 

@@ -37,6 +37,9 @@ for ep in endpoints:
                 # update the notification variables
                 job_listings_today += 1
                 hiring_org_set.add(ep["company"])
+            else:
+                # update date posted of listing if already in spreadsheet
+                gsheet_jobentries.update_posted_date(entry.date_posted, entry.req_id)
 
         print(f"Company Data Acquisition Successful\n {ep['company']}: {len(filtered_job_listings)}\n")
 

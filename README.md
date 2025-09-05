@@ -1,15 +1,13 @@
 # InternshipFinder
 
 **InternshipFinder** is a Python-based automation tool that helps students and early-career professionals track internship postings from multiple company career pages. 
-It uses live webscraping techniques to monitor JSON endpoints and stores relevant listings in an accessible Google Sheet.
+It uses live webscraping techniques to monitor career portals and store relevant job listings in an accessible Google Sheet.
 
 **Background**:
-I'm a college electrical engineering major that was fed up with having to keep track of 100 company job application portals. Since I have a healthy amount of dislike for 
-not only the job-hunting process, but Workday as a whole, I created this tool to simplify my workflow. No fancy AI stuff or anything. Just a solid Python automation script 
-for webscraping company jobsites. No support for big sites like Linkedin, Indeed, etc. due to their terms of service.
+I'm a college electrical engineering major that was fed up with having to keep track of 100 company job application portals. To that end, I created this tool to simplify my workflow. No fancy AI stuff or anything. Just a solid Python automation script for webscraping company jobsites. No support for big sites like Linkedin, Indeed, etc. due to their terms of service.
 
 <span style="color:red;">*Disclaimer:*</span>
-This tool is intended for personal, educational use only. 
+This tool is intended to show off my programming skils in building custom software applications with a use. 
 Anyone who forks/copies the code is individually responsible for ensuring they comply with the terms of service of any site they scrape. 
 The author is not responsible for misuse or legal consequences resulting from this software.
 
